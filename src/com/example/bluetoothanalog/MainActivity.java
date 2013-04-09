@@ -1,7 +1,5 @@
 package com.example.bluetoothanalog;
 
-import com.example.bluetoothserialtest.R;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
 import android.app.Activity;
 import cc.arduino.btserial.BtSerial;
 
