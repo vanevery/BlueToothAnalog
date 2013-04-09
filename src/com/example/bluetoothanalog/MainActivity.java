@@ -19,12 +19,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	BtSerial btserial;
 	
+	// Declare the custom view
 	MyDrawingView myDrawingView;
+	
 	Button connectButton;
-	Button readButton;
-	
-	StringBuilder sbuffer;
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,9 +32,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		connectButton = (Button) this.findViewById(R.id.connectButton);
 		connectButton.setOnClickListener(this);
 		
+		// Setup the custom view
 		myDrawingView = (MyDrawingView) this.findViewById(R.id.myDrawingView);
 		
-		sbuffer = new StringBuilder();
 		btserial = new BtSerial(this);
 	}
 	
@@ -52,10 +51,15 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	// Handlers let us interact with threads on the UI thread
+	// The handleMessage method receives messages from other threads and will act upon it on the UI thread
 	Handler handler = new Handler() {
 		  @Override
 		  public void handleMessage(Message msg) {
+		    
+		    // Pull out the data that was packed into the message with the key "serialvalue"
 			int messageData = msg.getData().getInt("serialvalue");
+			
+			// Send it over to the custom view
 			myDrawingView.setYoverTime(messageData);
 		  }
 	};	
@@ -67,17 +71,27 @@ public class MainActivity extends Activity implements OnClickListener {
 		{
 			Log.v(LOGTAG,"Data: " + serialValue);
 
-			// Turn it into an int
 			try {
+				// The data is coming to us as an ASCII string so we have to turn it into an int
+				// First we have to trim it to remove the newline
 				int intSerialValue = Integer.parseInt(serialValue.trim());
 
 				// Since btSerialEvent is happening in a separate thread, 
 				// we need to use a handler to send a message in order to interact with the UI thread
 				
+				// First we obtain a message object
 				Message msg = handler.obtainMessage();
+				
+				// Create a bundle to hold data
 				Bundle bundle = new Bundle();
+				
+				// Put our value with the key "serialvalue"
 				bundle.putInt("serialvalue", intSerialValue);
+				
+				// Set the message data to our bundle
 				msg.setData(bundle);
+				
+				// and finally send the message via the handler
 				handler.sendMessage(msg);
 			
 			} catch (NumberFormatException nfe) {
@@ -105,7 +119,4 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 		}
 	}
-	
-	
-
 }
